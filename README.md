@@ -1,3 +1,6 @@
+This is a raytraced on rails shooter made in 8 weeks for BLOCK C of the Programming track at Breda University of Aplied Sciences 
+
+
 # running
 1) Open "tmpl_2025-rt.sln"
 2) make sure you select the correct startup project i.e *1. Basics* and not UnitTests
