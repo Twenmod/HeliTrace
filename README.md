@@ -20,10 +20,15 @@ Score is based on enemies killed but you get a bonus for killing them using
 
 ## controls
 [LEFT_MOUSE] Shoot
+
 [RIGHT_MOUSE] Aim
+
 [ESC] for pause menu
+
 [Q] for quit
+
 [R] to restart
+
 [(LEFT/RIGHT)MOUSE] for UI
 
 # settings/configurables
