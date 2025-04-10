@@ -7,6 +7,10 @@
 // for your project. More info:
 // www.codeproject.com/Articles/1188975/How-to-Optimize-Compilation-Times-with-Precompil
 
+#pragma warning( disable : 4201) // Disable nameless struct warning since it is extensively used in template and is intended behaviour
+
+
+
 // common C++ headers
 #include <chrono>				// timing: struct Timer depends on this
 #include <fstream>				// file i/o
@@ -23,11 +27,12 @@
 // see: https://stackoverflow.com/a/11228864/2844473
 #include <immintrin.h>
 
+
 // shorthand for basic types
-typedef unsigned char uchar;
-typedef unsigned int uint;
-typedef unsigned short ushort;
-typedef unsigned short half;
+using uchar = unsigned char;
+using uint = unsigned int;
+using ushort = unsigned short;
+using half = unsigned short;
 
 // "leak" common namespaces to all compilation units. This is not standard // C++ practice
 // but a deliberate simplification for template projects. Feel free to remove this if it
@@ -57,6 +62,7 @@ using namespace std;
 
 // template headers
 #include "surface.h"
+#include "floattexture.h"
 #include "sprite.h"
 
 // namespaces
@@ -149,7 +155,7 @@ struct Timer
 	float elapsed() const
 	{
 		chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
-		chrono::duration<double> time_span = chrono::duration_cast<chrono::duration<double>>(t2 - start);
+		auto time_span = chrono::duration_cast<chrono::duration<double>>(t2 - start);
 		return (float)time_span.count();
 	}
 	void reset() { start = chrono::high_resolution_clock::now(); }
@@ -297,7 +303,7 @@ public:
 };
 
 // helper function for conversion of f32 colors to int
-inline uint RGBF32_to_RGB8( const float4* v )
+inline uint RGBF32_to_RGB8( const float4& v )
 {
 #ifdef _MSC_VER_
 	// based on https://stackoverflow.com/q/29856006
@@ -308,12 +314,13 @@ inline uint RGBF32_to_RGB8( const float4* v )
 	b = _mm_packus_epi32( b, b );
 	return _mm_cvtsi128_si32( _mm_packus_epi16( b, b ) );
 #else
-	uint r = (uint)(255.0f * min( 1.0f, v->x ));
-	uint g = (uint)(255.0f * min( 1.0f, v->y ));
-	uint b = (uint)(255.0f * min( 1.0f, v->z ));
+	uint r = (uint)(255.0f * min( 1.0f, v.x ));
+	uint g = (uint)(255.0f * min( 1.0f, v.y ));
+	uint b = (uint)(255.0f * min( 1.0f, v.z ));
 	return (r << 16) + (g << 8) + b;
 #endif
 }
+
 
 // application base class
 class TheApp
@@ -329,14 +336,59 @@ public:
 	virtual void MouseWheel( float y ) = 0;
 	virtual void KeyUp( int key ) = 0;
 	virtual void KeyDown( int key ) = 0;
+	virtual void DisplayImage(std::string type, uint texture, bool flip = false, bool _main = false) = 0;
 	bool uiUpdated;
-	Surface* screen = 0;
+	FloatTexture* screen = 0;
+	FloatTexture* debugScreen = 0;
+	FloatTexture* screenLighting = 0;
+	FloatTexture* normals = 0;
+	FloatTexture* positions = 0;
+	FloatTexture* overlay = 0;
+	uint renderTexture, debugRenderTexture;
+	bool denoise = true;
+	float edgeFallSpeed = 4.6f;
+	float posFallSpeed = 10.0f;
+	bool tonemap = true;
+	float exposure = EXPOSURE;
+	bool abberation = false;
+	float distortion = 1.0f;
+	bool CRTDistort = false;
+	bool scanLines = false;
+	bool vignetting = true;
+	float vignetteSize = 20.0f;
+	float vignetteSmooth = 0.15f;
+	bool reproject = true;
+	bool forceAccumulate = false;
+	bool forceUpdate = false;
+	float accumulatorLerp = 0.1f;
+	float accumulatorLerpDiff = 20.f;
+	float pixelChangeTreshold = 0.00f;
+	float reprojectSimilarityTreshold = 0.14f;
+	float postDofAmount = 0.1f;
+	float postDofFalloff = 0.1f;
+	float postDofFocusDist = 4.f;
+	float m_avg{ 0.f }, m_fps{ 0.f };
+	int m_cursorLockMode = GLFW_CURSOR_DISABLED;
+	bool m_running = true;
+	bool m_quit = false;
 };
 
 bool IsKeyDown( const uint key );
 
-#include "scene.h"
-#include "camera.h"
-#include "renderer.h"
+namespace tinybvh
+{
+	using bvhint2 = int2;
+	using bvhint3 = int3;
+	using bvhuint2 = uint2;
+	using bvhvec2 = float2;
+	using bvhvec3 = float3;
+	using bvhvec4 = float4;
+	using bvhdbl3 = double3;
+
+}
+#define TINYBVH_USE_CUSTOM_VECTOR_TYPES
+
+#include "tiny_bvh.h"
+
 
 // EOF

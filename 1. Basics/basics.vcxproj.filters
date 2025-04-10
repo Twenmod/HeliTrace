@@ -35,6 +35,40 @@
     <ClCompile Include="..\template\tmpl8math.cpp">
       <Filter>template</Filter>
     </ClCompile>
+    <ClCompile Include="tiny_bvh.cpp">
+      <Filter>template</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>template\model loading</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>template\model loading</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>template\model loading</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderScene.cpp" />
+    <ClCompile Include="MaterialManager.cpp">
+      <Filter>template\model loading</Filter>
+    </ClCompile>
+    <ClCompile Include="testshader.glsl" />
+    <ClCompile Include="floattexture.cpp" />
+    <ClCompile Include="SphereBVH.cpp" />
+    <ClCompile Include="SkyDome.cpp" />
+    <ClCompile Include="CubeBVH.cpp" />
+    <ClCompile Include="MarchingVolumeBVH.cpp" />
+    <ClCompile Include="FastNoise.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="EnemyObject.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="BarrelObject.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioManager.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="ScoreManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\template\common.h">
@@ -77,19 +111,85 @@
     <ClInclude Include="..\template\surface.h">
       <Filter>template</Filter>
     </ClInclude>
-    <ClInclude Include="..\template\camera.h">
-      <Filter>template</Filter>
-    </ClInclude>
     <ClInclude Include="..\template\scene.h">
       <Filter>template</Filter>
     </ClInclude>
     <ClInclude Include="..\template\tmpl8math.h">
       <Filter>template</Filter>
     </ClInclude>
+    <ClInclude Include="tiny_bvh.h">
+      <Filter>template</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.hpp">
+      <Filter>template\model loading</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.hpp">
+      <Filter>template\model loading</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>template\model loading</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderScene.h" />
+    <ClInclude Include="MaterialManager.h">
+      <Filter>template\model loading</Filter>
+    </ClInclude>
+    <ClInclude Include="floattexture.h" />
+    <ClInclude Include="SphereBVH.h" />
+    <ClInclude Include="SkyDome.h" />
+    <ClInclude Include="CubeBVH.h" />
+    <ClInclude Include="MarchingVolumeBVH.h" />
+    <ClInclude Include="FastNoise.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="EnemyObject.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="BarrelObject.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\template\camera.h">
+      <Filter>template\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioManager.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="miniaudio.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="ScoreManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\template\LICENSE">
       <Filter>template</Filter>
+    </None>
+    <None Include="Reprojection.vert">
+      <Filter>template\Shaders</Filter>
+    </None>
+    <None Include="Reprojection.frag">
+      <Filter>template\Shaders</Filter>
+    </None>
+    <None Include="Blur.vert">
+      <Filter>template\Shaders</Filter>
+    </None>
+    <None Include="Blur.frag">
+      <Filter>template\Shaders</Filter>
+    </None>
+    <None Include="Copy.vert">
+      <Filter>template\Shaders</Filter>
+    </None>
+    <None Include="Copy.frag">
+      <Filter>template\Shaders</Filter>
+    </None>
+    <None Include="Dof.frag">
+      <Filter>template\Shaders</Filter>
+    </None>
+    <None Include="DisplayShader.frag">
+      <Filter>template\Shaders</Filter>
+    </None>
+    <None Include="DifferenceCheck.frag">
+      <Filter>template\Shaders</Filter>
+    </None>
+    <None Include="OverlayShader.frag">
+      <Filter>template\Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -98,6 +198,18 @@
     </Filter>
     <Filter Include="template\imgui">
       <UniqueIdentifier>{b1e7f5d5-23d5-4fa2-8854-9a94fb160820}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="template\model loading">
+      <UniqueIdentifier>{3f2834ff-5237-4972-add0-1f6b8feccff3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="template\Shaders">
+      <UniqueIdentifier>{a7beabed-318a-4f0b-b1ef-f6a04a1cfde3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{65ff48e0-5e5c-4a20-bd41-bb7efcfb477a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio">
+      <UniqueIdentifier>{28eb4d3a-6d3e-4e10-923f-c33ac0e3d125}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

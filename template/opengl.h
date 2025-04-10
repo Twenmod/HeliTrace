@@ -10,12 +10,14 @@ class GLTexture
 public:
 	enum { DEFAULT = 0, FLOAT = 1, INTTARGET = 2 };
 	// constructor / destructor
-	GLTexture( uint width, uint height, uint type = DEFAULT );
+	GLTexture(uint width, uint height, uint type = DEFAULT, GLuint interpolation = GL_LINEAR);
 	~GLTexture();
 	// methods
 	void Bind( const uint slot = 0 );
 	void CopyFrom( Tmpl8::Surface* src );
+	void CopyFrom( FloatTexture* src );
 	void CopyTo( Tmpl8::Surface* dst );
+	void CopyTo(FloatTexture* dst);
 public:
 	// public data members
 	GLuint ID = 0;
@@ -38,6 +40,7 @@ public:
 	void Compile( const char* vtext, const char* ftext );
 	void Bind();
 	void SetInputTexture( uint slot, const char* name, GLTexture* texture );
+	void SetInputTexture( uint slot, const char* name, GLuint texture );
 	void SetInputMatrix( const char* name, const mat4& matrix );
 	void SetFloat( const char* name, const float v );
 	void SetInt( const char* name, const int v );
@@ -59,4 +62,4 @@ GLuint CreateVBO( const GLfloat* data, const uint size );
 void BindVBO( const uint idx, const uint N, const GLuint id );
 void CheckShader( GLuint shader, const char* vshader, const char* fshader );
 void CheckProgram( GLuint id, const char* vshader, const char* fshader );
-void DrawQuad();
+void DrawQuad(bool _flip = false);

@@ -47,13 +47,14 @@ public:
 // -----------------------------------------------------------
 // Sphere primitive
 // Basic sphere, with explicit support for rays that start
-// inside it. Good candidate for a dielectric material.
+// inside it. Good candidate for a dielectric 
+// .
 // -----------------------------------------------------------
-class Sphere
+class OldSphere
 {
 public:
-	Sphere() = default;
-	Sphere( int idx, float3 p, float r ) :
+	OldSphere() = default;
+	OldSphere( int idx, float3 p, float r ) :
 		pos( p ), r2( r* r ), invr( 1 / r ), objIdx( idx ) {}
 	void Intersect( Ray& ray ) const
 	{
@@ -88,14 +89,14 @@ public:
 	{
 		return (I - this->pos) * invr;
 	}
-	float3 GetAlbedo( const float3 I ) const
+	float3 GetAlbedo( const float3 /*I*/ ) const
 	{
 		return float3( 0.93f );
 	}
 	union
 	{
-		float3 pos;
 		__m128 pos4;
+		float3 pos;
 	};
 	float r2 = 0, invr = 0;
 	int objIdx = -1;
@@ -116,7 +117,7 @@ public:
 		float t = -(dot( ray.O, this->N ) + this->d) / (dot( ray.D, this->N ));
 		if (t < ray.t && t > 0) ray.t = t, ray.objIdx = objIdx;
 	}
-	float3 GetNormal( const float3 I ) const
+	float3 GetNormal( const float3 /*I*/ ) const
 	{
 		return N;
 	}
@@ -176,7 +177,7 @@ class Cube
 {
 public:
 	Cube() = default;
-	Cube( int idx, float3 pos, float3 size, mat4 transform = mat4::Identity() )
+	Cube( int idx, float3 pos, float3 size, mat4 /*transform*/ = mat4::Identity() )
 	{
 		objIdx = idx;
 		b[0] = float4( pos - 0.5f * size, 1 );
@@ -225,7 +226,7 @@ public:
 		// return normal in world space
 		return N;
 	}
-	float3 GetAlbedo( const float3 I ) const
+	float3 GetAlbedo( const float3 /*I*/ ) const
 	{
 		return float3( 1, 1, 1 );
 	}
@@ -279,11 +280,11 @@ public:
 		}
 		return false;
 	}
-	float3 GetNormal( const float3 I ) const
+	float3 GetNormal( const float3 /*I*/ ) const
 	{
 		return float3( -T.cell[1], -T.cell[5], -T.cell[9] );
 	}
-	float3 GetAlbedo( const float3 I ) const
+	float3 GetAlbedo( const float3 /*I*/ ) const
 	{
 		return float3( 10 );
 	}
@@ -423,7 +424,7 @@ public:
 			if (d1 < 0.0) return false;
 			d1 = sqrtf( d1 * 0.5f ), d2 = c1 / d1;
 		}
-		float t = 1e20f;
+		//float t = 1e20f;
 		h = d1 * d1 - z + d2;
 		if (h > 0)
 		{
@@ -445,7 +446,7 @@ public:
 		const float3 L = I - float3( 0, 0, 1.5f );
 		return normalize( L * (dot( L, L ) - rt2 - rc2 * float3( 1, 1, -1 )) );
 	}
-	float3 Torus::GetAlbedo( const float3 I ) const
+	float3 Torus::GetAlbedo( const float3 /*I*/ ) const
 	{
 		return float3( 1 ); // material.albedo;
 	}
@@ -487,8 +488,8 @@ public:
 	#else
 		quad = Quad( 0, 1 );									// 0: light source
 	#endif
-		sphere = Sphere( 1, float3( 0 ), 0.6f );				// 1: bouncing ball
-		sphere2 = Sphere( 2, float3( 0, 2.5f, -3.07f ), 8 );	// 2: rounded corners
+		sphere = OldSphere( 1, float3( 0 ), 0.6f );				// 1: bouncing ball
+		sphere2 = OldSphere( 2, float3( 0, 2.5f, -3.07f ), 8 );	// 2: rounded corners
 		cube = Cube( 3, float3( 2, 0, 2 ), float3( 1.2f ) );	// 3: cube
 		plane[0] = Plane( 4, float3( 1, 0, 0 ), 3 );			// 4: left wall
 		plane[1] = Plane( 5, float3( -1, 0, 0 ), 2.99f );		// 5: right wall
@@ -552,9 +553,9 @@ public:
 		float r2 = (r0 - stratum) / (1 - stratum);
 		// get a random position on the selected quad
 		const float size = q.size;
-		float3 corner1 = TransformPosition( float3( -size, 0, -size ), q.T );
-		float3 corner2 = TransformPosition( float3( size, 0, -size ), q.T );
-		float3 corner3 = TransformPosition( float3( -size, 0, size ), q.T );
+		float3 corner1 = TransformPosition( float3( -size, -0.1, -size ), q.T );
+		float3 corner2 = TransformPosition( float3( size, -0.1, -size ), q.T );
+		float3 corner3 = TransformPosition( float3( -size, -0.1, size ), q.T );
 		return corner1 + r2 * (corner2 - corner1) + r1 * (corner3 - corner1);
 	#endif
 	}
@@ -597,13 +598,46 @@ public:
 		return sqrf( quad.size * 2 );
 	#endif
 	}
-	constexpr float GetLightCount() const
+	constexpr float GetTotalLightCount() const
 	{
 	#ifdef FOURLIGHTS
-		return 4; // what did you expect
+		return 5; // 4+spotlight
 	#else
-		return 1;
+		return 2;
 	#endif
+	}
+	float3 GetSpotPosition() const
+	{
+		return float3(0, 0, 0);
+	}
+	float3 GetSpotDirection() const
+	{
+		return normalize(float3(0, sin(animTime), 1));
+	}
+	float3 GetSpotColor(const float3& rayDirection, const float3& spotDirection) const
+	{
+		const float scale = 2.f;
+		static const float3 worldUp = float3(0, 1, 0);
+
+		float3 right;
+		if (spotDirection.x == worldUp.x && spotDirection.y == worldUp.y && spotDirection.z == worldUp.z) right = float3(1, 0, 0);
+		else right = normalize(cross(spotDirection, worldUp));
+		float3 up = normalize(cross(right, spotDirection));
+
+		float u = (dot(rayDirection, right)+1)*0.5f;
+		float v = 1-((dot(rayDirection, up)+1)*0.5f);
+		u = u * scale + ((1-scale) *0.5f);
+		v = v * scale + ((1-scale) *0.5f);
+
+
+		// back wall: logo
+		if (u >= 1 || u < 0 || v >= 1 || v < 0) return float3(0); // no light outside texture
+		static Surface logo("../assets/texture.jpg");
+		const int2 resolution = int2(128);
+		int ix = (int)((u) * (resolution.x)), iy = (int)((v) * (resolution.y));
+		uint p = logo.pixels[(ix) + (iy) * resolution.x];
+		uint3 i3((p >> 16) & 255, (p >> 8) & 255, p & 255);
+		return float3(i3) * (1.0f / 255.0f)*25.f;
 	}
 	void FindNearest( Ray& ray ) const
 	{
@@ -623,6 +657,7 @@ public:
 		const __m128 mask4 = _mm_cmple_ps( d4, zero4 );
 		const __m128 t4 = _mm_blendv_ps( d4, _mm_set1_ps( 1e34f ), mask4 );
 		/* first: unconditional */  ray.t = t4.m128_f32[0], ray.objIdx = idx4.m128i_i32[0];
+		
 		if (t4.m128_f32[1] < ray.t) ray.t = t4.m128_f32[1], ray.objIdx = idx4.m128i_i32[1];
 		if (t4.m128_f32[2] < ray.t) ray.t = t4.m128_f32[2], ray.objIdx = idx4.m128i_i32[2];
 	#ifdef FOURLIGHTS
@@ -652,9 +687,9 @@ public:
 			const float d = b * b - (_mm_dp_ps( oc, oc, 0x71 ).m128_f32[0] - 0.36f);
 			if (d > 0)
 			{
-				const float t = -b - sqrtf( d );
-				const bool hit = t < ray.t && t > 0;
-				if (hit) { ray.t = t, ray.objIdx = 1; }
+				const float sT = -b - sqrtf( d );
+				const bool hit = sT < ray.t && sT > 0;
+				if (hit) { ray.t = sT, ray.objIdx = 1; }
 			};
 		}
 		{
@@ -665,9 +700,9 @@ public:
 			const float d = b * b - (_mm_dp_ps( oc, oc, 0x71 ).m128_f32[0] - 64.0f);
 			if (d > 0)
 			{
-				const float t = sqrtf( d ) - b;
-				const bool hit = t < ray.t && t > 0;
-				if (hit) { ray.t = t, ray.objIdx = 2; }
+				const float sT = sqrtf( d ) - b;
+				const bool hit = sT < ray.t && sT > 0;
+				if (hit) { ray.t = sT, ray.objIdx = 2; }
 			};
 		}
 		cube.Intersect( ray );
@@ -733,13 +768,13 @@ public:
 		// once we have triangle support, we should pass objIdx and the bary-
 		// centric coordinates of the hit, instead of the intersection location.
 	}
-	float GetReflectivity( int objIdx, float3 I ) const
+	float GetReflectivity( const int objIdx, float3 /*I*/ ) const
 	{
 		if (objIdx == 1 /* ball */) return 1;
 		if (objIdx == 6 /* floor */) return 0.3f;
 		return 0;
 	}
-	float GetRefractivity( int objIdx, float3 I ) const
+	float GetRefractivity( const int objIdx, float3 /*I*/ ) const
 	{
 		return (objIdx == 3 || objIdx == 10) ? 1.0f : 0.0f;
 	}
@@ -754,8 +789,8 @@ public:
 #else
 	Quad quad, dummyQuad1, dummyQuad2, dummyQuad3;
 #endif
-	Sphere sphere;
-	Sphere sphere2;
+	OldSphere sphere;
+	OldSphere sphere2;
 	Cube cube;
 	Plane plane[6];
 	Torus torus;

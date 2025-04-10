@@ -4,6 +4,11 @@ VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "1. Basics", "1. Basics\basics.vcxproj", "{1B482D44-6893-42E7-ADF6-E497E4FCE916}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTests", "UnitTests\UnitTests.vcxproj", "{B21C28B5-9D14-47F6-A7E5-42B9783492D2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1B482D44-6893-42E7-ADF6-E497E4FCE916} = {1B482D44-6893-42E7-ADF6-E497E4FCE916}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -14,6 +19,10 @@ Global
 		{1B482D44-6893-42E7-ADF6-E497E4FCE916}.Debug|x64.Build.0 = Debug|x64
 		{1B482D44-6893-42E7-ADF6-E497E4FCE916}.Release|x64.ActiveCfg = Release|x64
 		{1B482D44-6893-42E7-ADF6-E497E4FCE916}.Release|x64.Build.0 = Release|x64
+		{B21C28B5-9D14-47F6-A7E5-42B9783492D2}.Debug|x64.ActiveCfg = Debug|x64
+		{B21C28B5-9D14-47F6-A7E5-42B9783492D2}.Debug|x64.Build.0 = Debug|x64
+		{B21C28B5-9D14-47F6-A7E5-42B9783492D2}.Release|x64.ActiveCfg = Release|x64
+		{B21C28B5-9D14-47F6-A7E5-42B9783492D2}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

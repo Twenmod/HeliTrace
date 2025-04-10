@@ -4,6 +4,8 @@
 
 #pragma once
 
+
+
 namespace Tmpl8
 {
 
@@ -63,7 +65,7 @@ public:
 	void Clear( uint c );
 	void Line( float x1, float y1, float x2, float y2, uint c );
 	void Plot( int x, int y, uint c );
-	void LoadFromFile( const char* file );
+	void LoadFromFile(const char* file);
 	void CopyTo( Surface* dst, int x, int y );
 	void Box( int x1, int y1, int x2, int y2, uint color );
 	void Bar( int x1, int y1, int x2, int y2, uint color );
